@@ -5,27 +5,15 @@ import java.util.List;
 
 public class DeveloperDAO {
 
-    private List<Developer> developerBuffer;
+    private List<Developer> developerList;
 
     private final File developerFile = new File("src/developerFile.txt");
 
     private Integer nextId = 0;
 
-    public DeveloperDAO(){this.getAllDevelopers();}
-
-    public Developer getById(Integer id){
-        Developer developer;
-        for (int i = 0; i <developerBuffer.size(); i++) {
-            developer = developerBuffer.get(i);
-            if (developer.getId().equals(id)){return developer;}
-        }
-        return null;
-    }
-
-    public Collection<Developer> getAllDevelopers(){
-        if (developerBuffer != null){return developerBuffer;}
+    public DeveloperDAO(){
         String buffer;
-        developerBuffer = new ArrayList<>();
+        this.developerList = new ArrayList<>();
         try(BufferedReader fileReader = new BufferedReader(new FileReader(developerFile));) {
             while ((buffer = fileReader.readLine())!= null){
                 String[] splitBuffer = buffer.split(",");
@@ -38,20 +26,30 @@ public class DeveloperDAO {
                 developer.setSpeciality(splitBuffer[3]);
                 developer.setExperience(Integer.parseInt(splitBuffer[4]));
                 developer.setSalary(Integer.parseInt(splitBuffer[5]));
-                this.developerBuffer.add(developer);
+                this.developerList.add(developer);
             }
         }catch (IOException|NumberFormatException|ArrayIndexOutOfBoundsException i){}
-        return developerBuffer;
+    }
+
+    public Developer getById(Integer id){
+        for (Developer developer: developerList) {
+            if (developer.getId().equals(id)){return  developer;};
+        }
+        return null;
+    }
+
+    public Collection<Developer> getAllDevelopers(){
+        return developerList;
     }
 
     public void addDeveloper(Developer developer){
-        developerBuffer.add(developer);
+        developerList.add(developer);
         nextId++;
     }
 
     public boolean saveChanges(){
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(developerFile));) {
-            for (Developer developer: developerBuffer) {
+            for (Developer developer: developerList) {
                 writer.write(developer.toString());
                 writer.newLine();
             }
@@ -65,11 +63,11 @@ public class DeveloperDAO {
     }
 
     public void updateDeveloper(Developer developer){
-        this.developerBuffer.set(developerBuffer.indexOf(getById(developer.getId())),developer);
+        this.developerList.set(developerList.indexOf(getById(developer.getId())),developer);
     }
 
     public void deleteDeveloper(Integer id){
-        developerBuffer.removeIf(developer -> developer.getId().equals(id));
+        developerList.removeIf(developer -> developer.getId().equals(id));
     }
 
 

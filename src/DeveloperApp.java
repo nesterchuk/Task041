@@ -4,7 +4,7 @@ public class DeveloperApp {
 
     public static void main(String[] args) {
 
-        DeveloperView view = new DeveloperView();
+        DeveloperController view = new DeveloperController();
         while (view.startMenu()){};
     }
 }
